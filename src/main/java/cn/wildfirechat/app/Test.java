@@ -59,7 +59,17 @@ public class Test {
 	}
 	private static final Logger LOG = LoggerFactory.getLogger(Test.class);
 	public static final MediaType JSONMediaType = MediaType.get("application/json; charset=utf-8");
-	static private OkHttpClient client = new OkHttpClient.Builder().callTimeout(60, TimeUnit.SECONDS).writeTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).build();
+	static private final Dispatcher dispatch = new Dispatcher();
+	static {
+		dispatch.setMaxRequests(200);
+		dispatch.setMaxRequestsPerHost(200);
+	}
+	static private final OkHttpClient client = new OkHttpClient.Builder()
+			.callTimeout(60, TimeUnit.SECONDS)
+			.writeTimeout(60, TimeUnit.SECONDS)
+			.readTimeout(60, TimeUnit.SECONDS)
+			.dispatcher(dispatch)
+			.build();
 
 	public static void httpJsonPost(final String url, final String jsonStr, final Callback callback){
 		LOG.info("POST to {} with data {}", url, jsonStr);
